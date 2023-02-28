@@ -149,5 +149,5 @@ for moves in range(T+1): # 1..11
         for mov in range(moves):
             print (move_names[int(str(m[op[mov]]))])
         exit(0)
-        
+print('unsat')
 	# Output the moves
