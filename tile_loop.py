@@ -3,9 +3,12 @@
 ## MEMBER 2: <roll_number_2>
 ## MEMBER 3: <roll_number_3>
 import sys
+import time
 from copy import deepcopy
 
 from z3 import *
+
+init_time = time.time()
 
 file = sys.argv[1]
 
@@ -49,7 +52,7 @@ def get_next_state(curr_state, move):
 		pass
 	return curr_state_copy
 
-initial_state = [ elements[0][i][j] == matrix[i][j] for i in range(n) for j in range(n)]
+initial_state = [elements[0][i][j] == matrix[i][j] for i in range(n) for j in range(n)]
 
 final_state = [elements[T][i][j] == ideal_matrix[i][j] for i in range(n) for j in range(n)]
 
@@ -57,12 +60,13 @@ s = Solver()
 
 # Set s to the required formula
 s.add(initial_state)
+s.add(final_state)
 
 # all elements are in range 1 to n^2
-for k in range(T+1):
-	for i in range(n):
-		for j in range(n):
-			s.add(And(elements[k][i][j] >= 1, elements[k][i][j] <= n*n))
+# for k in range(T+1):
+# 	for i in range(n):
+# 		for j in range(n):
+# 			s.add(And(elements[k][i][j] >= 1, elements[k][i][j] <= n*n))
 
 for i in range(T):
 	moves_available = moves_r[i] + moves_l[i] + moves_u[i] + moves_d[i] + moves_n[i]
@@ -71,12 +75,12 @@ for i in range(T):
 for k in range(T):
 	moves_available = moves_r[k] + moves_l[k] + moves_u[k] + moves_d[k] + moves_n[k]
 	for move in moves_available:
-		constraint = []
 		for i in range(n):
 			for j in range(n):
 				s.add(Implies(move, elements[k+1][i][j] == get_next_state(elements[k], move)[i][j]))
 
-s.add(final_state)
+
+
 
 x = s.check()
 print(x)
@@ -104,3 +108,5 @@ if x == sat:
 			if m[move] == True and str(move).startswith("n")==False:
 				print(str(int(str(move).split("_")[1])-1)+str(move)[0])
 				break
+finish = time.time()
+sys.stderr.write("Time taken: " + str(finish-init_time) + " seconds\n")
