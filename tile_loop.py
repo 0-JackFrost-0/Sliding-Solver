@@ -68,19 +68,18 @@ s.add(final_state)
 # 		for j in range(n):
 # 			s.add(And(elements[k][i][j] >= 1, elements[k][i][j] <= n*n))
 
-for i in range(T):
-	moves_available = moves_r[i] + moves_l[i] + moves_u[i] + moves_d[i] + moves_n[i]
-	s.add(PbEq([(x,1) for x in moves_available], 1))
-
 for k in range(T):
 	moves_available = moves_r[k] + moves_l[k] + moves_u[k] + moves_d[k] + moves_n[k]
+	s.add(PbEq([(x,1) for x in moves_available], 1))
 	for move in moves_available:
 		for i in range(n):
 			for j in range(n):
 				s.add(Implies(move, elements[k+1][i][j] == get_next_state(elements[k], move)[i][j]))
-
-
-
+	
+	# if k < T-1:
+	# 	moves_available_next = moves_r[k+1] + moves_l[k+1] + moves_u[k+1] + moves_d[k+1] + moves_n[k+1]
+	# 	for i, move in enumerate(moves_available):
+	# 		s.add(Implies(move, moves_available_next[i] == False))
 
 x = s.check()
 print(x)
